@@ -42,14 +42,14 @@ public class CustomerEventProducer {
         try {
             // Create login data for the customer
             Map<String, Object> loginData = new HashMap<>();
-            loginData.put("customerId", customer.getId());
+            loginData.put("customerId", customer.getDocument());
             loginData.put("username", customer.getEmail()); // Use email as username
             loginData.put("password", generateDefaultPassword(customer.getDocument())); // Generate default password
             loginData.put("email", customer.getEmail());
             
             String loginJson = JsonUtils.toJson(loginData);
             kafkaTemplate.send(LOGIN_TOPIC, "addLogin", loginJson);
-            System.out.println("Published login creation event for customer: " + customer.getId());
+            System.out.println("Published login creation event for customer: " + customer.getDocument());
         } catch (Exception e) {
             System.err.println("Error creating login for customer: " + e.getMessage());
         }

@@ -27,7 +27,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: customerorders
-      MYSQL_USER: customerorders
+      MYSQL_USER: customerOrder
       MYSQL_PASSWORD: corders123.
     ports:
       - "3306:3306"
