@@ -1,181 +1,312 @@
-# EDA Microservices Architecture
+# 🚀 EDA Microservices with Kafka
 
-Este proyecto implementa una arquitectura de microservicios basada en Event-Driven Architecture (EDA) utilizando Apache Kafka y Spring Boot.
+## 📋 Descripción del Proyecto
+
+Este proyecto implementa una **Arquitectura Orientada a Eventos (EDA)** utilizando **Apache Kafka** y **Spring Boot** para gestionar microservicios de Customer, Login y Order. Incluye un **API Gateway** para centralizar el acceso a todos los microservicios.
+
+## 👥 Autores
+
+- **Cristian Andrés Basto Largo**
+- **Andrea Katherine Bello Sotelo** 
+- **Laura Vanessa Figueredo Martinez**
 
 ## 🏗️ Arquitectura
 
-### Microservicios
-- **Customer Service** (Puerto 8080): Gestión de clientes
-- **Login Service** (Puerto 8081): Gestión de autenticación
-- **Order Service** (Puerto 8082): Gestión de pedidos
-- **API Gateway** (Puerto 8083): Punto único de acceso
+### Microservicios Implementados
+
+1. **Customer Service** (Puerto 8080)
+   - Gestión de clientes
+   - Auto-creación de Login al crear Customer
+   - Tópico unificado: `customer_events`
+
+2. **Login Service** (Puerto 8081)
+   - Gestión de autenticación
+   - Tópico unificado: `login_events`
+
+3. **Order Service** (Puerto 8082)
+   - Gestión de pedidos
+   - Tópico unificado: `order_events`
+
+4. **API Gateway** (Puerto 8083)
+   - Punto de entrada único
+   - Enrutamiento a microservicios
+   - CORS configurado
 
 ### Infraestructura
-- **MySQL**: Base de datos principal
-- **Apache Kafka**: Sistema de mensajería para eventos
-- **Zookeeper**: Coordinador de Kafka
 
-## 🚀 Instalación y Ejecución
+- **Apache Kafka**: Mensajería asíncrona
+- **MySQL**: Base de datos relacional
+- **Docker Compose**: Orquestación de servicios
+- **Spring Cloud Gateway**: API Gateway moderno
+
+## 🛠️ Tecnologías Utilizadas
+
+- **Java 17**
+- **Spring Boot 3.2.0**
+- **Spring Cloud 2023.0.0**
+- **Apache Kafka**
+- **MySQL 8.0**
+- **Docker & Docker Compose**
+- **Maven**
+
+## 🚀 Instalación y Configuración
 
 ### Prerrequisitos
-- Java 17+
+
+- Java 17 o superior
 - Maven 3.6+
 - Docker y Docker Compose
 - MySQL (opcional, se incluye en Docker)
 
-### 1. Iniciar la Infraestructura
+### 1. Clonar el Repositorio
+
 ```bash
+git clone <repository-url>
+cd EDAKafka
+```
+
+### 2. Configurar Base de Datos
+
+```sql
+CREATE DATABASE customerorders;
+CREATE USER 'customerOrder'@'localhost' IDENTIFIED BY 'corders123.';
+GRANT ALL PRIVILEGES ON customerorders.* TO 'customerOrder'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+### 3. Iniciar Infraestructura
+
+```bash
+# Iniciar Kafka y MySQL
 docker-compose up -d
 ```
 
-### 2. Ejecutar los Microservicios
+### 4. Compilar Microservicios
 
-#### Customer Service
 ```bash
-cd edamicrokafka
-mvn spring-boot:run
+# Compilar todos los microservicios
+mvn clean compile -f edamicrokafka/pom.xml
+mvn clean compile -f edamicrokafka-login/pom.xml
+mvn clean compile -f edamicrokafka-order/pom.xml
+mvn clean compile -f edamicrokafka-gateway/pom.xml
 ```
 
-#### Login Service
+### 5. Ejecutar Microservicios
+
 ```bash
-cd edamicrokafka-login
-mvn spring-boot:run
+# Terminal 1 - Customer Service
+cd edamicrokafka && mvn spring-boot:run
+
+# Terminal 2 - Login Service
+cd edamicrokafka-login && mvn spring-boot:run
+
+# Terminal 3 - Order Service
+cd edamicrokafka-order && mvn spring-boot:run
+
+# Terminal 4 - API Gateway
+cd edamicrokafka-gateway && mvn spring-boot:run
 ```
 
-#### Order Service
-```bash
-cd edamicrokafka-order
-mvn spring-boot:run
-```
+### 6. Script de Prueba Automática
 
-#### API Gateway
 ```bash
-cd edamicrokafka-gateway
-mvn spring-boot:run
-```
-
-### 3. Probar los Servicios
-```bash
-# Ejecutar script de pruebas
-./test-microservices.bat
+# Ejecutar script completo de pruebas
+test-completo.bat
 ```
 
 ## 📡 API Endpoints
 
-### A través del API Gateway (Puerto 8083)
+### Customer Service (Puerto 8080)
 
-#### Customer Service
-- `GET /api/customers` - Obtener todos los clientes
-- `POST /api/customers` - Crear cliente
-- `GET /api/customers/{id}` - Obtener cliente por ID
-- `PUT /api/customers/{id}` - Actualizar cliente
-- `DELETE /api/customers/{id}` - Eliminar cliente
+```http
+POST   /api/customers          # Crear cliente
+PUT    /api/customers          # Actualizar cliente
+GET    /api/customers/{id}     # Obtener cliente por ID
+GET    /api/customers          # Obtener todos los clientes
+```
 
-#### Login Service
-- `GET /api/logins` - Obtener todos los logins
-- `POST /api/logins` - Crear login
-- `GET /api/logins/{id}` - Obtener login por ID
-- `GET /api/logins/customer/{customerId}` - Obtener login por cliente
-- `GET /api/logins/username/{username}` - Obtener login por usuario
+### Login Service (Puerto 8081)
 
-#### Order Service
-- `GET /api/orders` - Obtener todos los pedidos
-- `POST /api/orders` - Crear pedido
-- `GET /api/orders/{id}` - Obtener pedido por ID
-- `GET /api/orders/customer/{customerId}` - Obtener pedidos por cliente
-- `GET /api/orders/status/{status}` - Obtener pedidos por estado
+```http
+POST   /api/logins             # Crear login
+PUT    /api/logins             # Actualizar login
+GET    /api/logins/{id}        # Obtener login por ID
+GET    /api/logins             # Obtener todos los logins
+```
 
-## 🔄 Event-Driven Architecture
+### Order Service (Puerto 8082)
 
-### Tópicos de Kafka
-- `customer_events`: Eventos de clientes (addCustomer, editCustomer, findCustomerById, findAllCustomers)
-- `login_events`: Eventos de autenticación (addLogin, editLogin, findLoginById, findAllLogins)
-- `order_events`: Eventos de pedidos (addOrder, editOrder, findOrderById, findAllOrders)
+```http
+POST   /api/orders             # Crear pedido
+PUT    /api/orders             # Actualizar pedido
+GET    /api/orders/{id}        # Obtener pedido por ID
+GET    /api/orders             # Obtener todos los pedidos
+```
 
-### Flujo de Eventos
-1. **Creación de Cliente**: Cuando se crea un cliente, automáticamente se crea un registro de login
-2. **Tópicos Únicos**: Cada entidad usa un solo tópico con diferentes claves de evento
-3. **Desacoplamiento**: Los microservicios se comunican solo a través de eventos
+### API Gateway (Puerto 8083)
 
-## 🗄️ Base de Datos
+```http
+# Todas las rutas anteriores accesibles a través del Gateway
+GET    /api/customers          # → Customer Service
+GET    /api/logins             # → Login Service
+GET    /api/orders             # → Order Service
+```
 
-### Tablas
-- `customers`: Información de clientes
-- `logins`: Credenciales de autenticación
-- `orders`: Pedidos
-- `order_items`: Items de pedidos
+## 🎯 Funcionalidades Implementadas
 
-### Configuración
-- **Host**: localhost:3306
-- **Database**: customerorders
-- **Usuario**: customerorders
-- **Contraseña**: corders123.
+### Punto 3: Auto-creación de Login
+- Al crear un Customer, se crea automáticamente un Login
+- Contraseña generada automáticamente basada en el documento
+- Comunicación asíncrona via Kafka
+
+### Punto 4: Tópicos Unificados
+- Un solo tópico por entidad de negocio
+- Claves para diferenciar tipos de eventos:
+  - `customer_events`: addCustomer, editCustomer, findCustomerById, findAllCustomers
+  - `login_events`: addLogin, editLogin, findLoginById, findAllLogins
+  - `order_events`: addOrder, editOrder, findOrderById, findAllOrders
+
+### Punto 5: API Gateway
+- Punto de entrada único (puerto 8083)
+- Enrutamiento automático a microservicios
+- CORS configurado globalmente
+- Logging detallado
 
 ## 🧪 Pruebas
 
-### Prueba Manual
-1. Crear un cliente:
+### Scripts de Prueba Disponibles
+
+1. **test-completo.bat**: Prueba completa de todos los microservicios
+2. **evidencia-topico-unico.bat**: Prueba específica de tópicos unificados
+3. **evidencia-netflix-zuul.bat**: Prueba específica del API Gateway
+
+### Ejemplo de Prueba Manual
+
 ```bash
+# Crear Customer (debe crear Login automáticamente)
 curl -X POST http://localhost:8083/api/customers \
   -H "Content-Type: application/json" \
-  -d '{"document":"12345678","name":"Juan Perez","email":"juan@example.com","phone":"3001234567"}'
-```
+  -d '{
+    "document": "19273",
+    "firstname": "Laura",
+    "lastname": "Perez",
+    "address": "Norte",
+    "phone": "5123452",
+    "email": "pepito@c.com"
+  }'
 
-2. Verificar que se creó el login automáticamente:
-```bash
+# Verificar Login creado automáticamente
 curl -X GET http://localhost:8083/api/logins
+
+# Obtener todos los customers
+curl -X GET http://localhost:8083/api/customers
 ```
 
-3. Crear un pedido:
-```bash
-curl -X POST http://localhost:8083/api/orders \
-  -H "Content-Type: application/json" \
-  -d '{"customerId":1,"orderNumber":"ORD-001","totalAmount":100.50,"shippingAddress":"Calle 123","billingAddress":"Calle 123"}'
+## 📊 Estructura del Proyecto
+
+```
+EDAKafka/
+├── edamicrokafka/                 # Customer Service
+│   ├── src/main/java/
+│   │   └── co/edu/uptc/edamicrokafka/
+│   │       ├── controller/        # REST Controllers
+│   │       ├── model/             # JPA Entities
+│   │       ├── repository/        # Data Repositories
+│   │       ├── service/           # Business Logic
+│   │       └── utils/             # Utility Classes
+│   └── pom.xml
+├── edamicrokafka-login/           # Login Service
+├── edamicrokafka-order/           # Order Service
+├── edamicrokafka-gateway/         # API Gateway
+├── docker-compose.yaml            # Infrastructure
+├── test-completo.bat              # Test Script
+└── README.md                      # This file
 ```
 
-## 📊 Monitoreo
+## 🔧 Configuración de Base de Datos
+
+### Propiedades de Conexión
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/customerorders?serverTimezone=GMT-5
+spring.datasource.username=customerOrder
+spring.datasource.password=corders123.
+```
+
+### Configuración de Kafka
+
+```properties
+spring.kafka.bootstrap-servers=localhost:29092
+spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer
+spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer
+spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer
+spring.kafka.consumer.value-deserializer=org.springframework.kafka.support.serializer.JsonDeserializer
+```
+
+## 📈 Monitoreo y Logs
 
 ### Logs de Kafka
-Los eventos se registran en la consola de cada microservicio. Busca mensajes como:
-- `Published addCustomer event`
-- `Received customer event with key: addCustomer`
-- `Customer added successfully`
+- Tópicos creados automáticamente via Docker Compose
+- Logs de eventos en consolas de microservicios
+- Claves de eventos para diferenciación
 
-### Verificar Tópicos
-```bash
-docker exec -it edakafka-kafka-1 kafka-topics --list --bootstrap-server localhost:9092
-```
-
-## 🔧 Configuración Avanzada
-
-### Variables de Entorno
-- `SPRING_KAFKA_BOOTSTRAP_SERVERS`: Servidores de Kafka
-- `SPRING_DATASOURCE_URL`: URL de la base de datos
-- `SERVER_PORT`: Puerto del microservicio
-
-### Personalización de Eventos
-Los eventos se pueden personalizar modificando las clases `*EventProducer` y `*EventConsumer` en cada microservicio.
+### Logs de Gateway
+- Enrutamiento de requests
+- CORS handling
+- Performance metrics
 
 ## 🚨 Solución de Problemas
 
-### Puerto en Uso
-Si un puerto está en uso, modifica el `application.properties` del microservicio correspondiente.
-
-### Kafka No Conecta
-Verifica que Docker esté ejecutándose y que los contenedores estén activos:
+### Error de Conexión a Base de Datos
 ```bash
-docker ps
+# Verificar que MySQL esté ejecutándose
+docker ps | grep mysql
+
+# Verificar credenciales
+mysql -u customerOrder -p customerorders
 ```
 
-### Base de Datos
-Si hay problemas de conexión, verifica que MySQL esté ejecutándose y que las credenciales sean correctas.
+### Error de Conexión a Kafka
+```bash
+# Verificar que Kafka esté ejecutándose
+docker ps | grep kafka
 
-## 📝 Commits Realizados
+# Verificar tópicos creados
+docker exec -it edakafka_kafka_1 kafka-topics --list --bootstrap-server localhost:29092
+```
 
-1. **feat: Add Login and Order microservices with EDA pattern** - Creación de microservicios Login y Order
-2. **feat: Implement unified topics and API Gateway** - Implementación de tópicos únicos y API Gateway
+### Puerto en Uso
+```bash
+# Verificar puertos ocupados
+netstat -ano | findstr :8080
+netstat -ano | findstr :8081
+netstat -ano | findstr :8082
+netstat -ano | findstr :8083
+```
 
-## 👥 Contribuidores
+## 📝 Notas de Desarrollo
 
-- Laura - Desarrollo de la arquitectura EDA
-- Asistente IA - Implementación de microservicios
+- **Patrón EDA**: Comunicación asíncrona entre microservicios
+- **Tópicos Unificados**: Un tópico por entidad con claves diferenciadas
+- **Auto-creación**: Login se crea automáticamente al crear Customer
+- **API Gateway**: Punto de entrada único con enrutamiento automático
+- **CORS**: Configurado globalmente para desarrollo
+
+## 🔄 Flujo de Datos
+
+1. **Cliente** → API Gateway (puerto 8083)
+2. **API Gateway** → Microservicio específico
+3. **Microservicio** → Base de datos (persistencia)
+4. **Microservicio** → Kafka (evento)
+5. **Kafka** → Otros microservicios (notificación)
+
+## 📚 Documentación Adicional
+
+- [Spring Boot Documentation](https://spring.io/projects/spring-boot)
+- [Apache Kafka Documentation](https://kafka.apache.org/documentation/)
+- [Spring Cloud Gateway Documentation](https://spring.io/projects/spring-cloud-gateway)
+- [Docker Compose Documentation](https://docs.docker.com/compose/)
+
+---
+
+**Desarrollado por:** Cristian Andrés Basto Largo, Andrea Katherine Bello Sotelo, Laura Vanessa Figueredo Martinez
