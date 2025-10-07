@@ -14,7 +14,7 @@ public class LoginEventProducer {
     
     private static final String LOGIN_TOPIC = "login_events";
     
-    public void publishAddLoginEvent(Login login) {
+    public void sendLoginEvent(Login login) {
         try {
             String message = JsonUtils.toJson(login);
             kafkaTemplate.send(LOGIN_TOPIC, "addLogin", message);

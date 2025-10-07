@@ -21,14 +21,14 @@ public class OrderService {
     
     public Order createOrder(Order order) {
         Order savedOrder = orderRepository.save(order);
-        orderEventProducer.publishAddOrderEvent(savedOrder);
+        orderEventProducer.sendOrderEvent(savedOrder);
         return savedOrder;
     }
     
     public Order updateOrder(Order order) {
         if (orderRepository.existsById(order.getId())) {
             Order savedOrder = orderRepository.save(order);
-            orderEventProducer.publishEditOrderEvent(savedOrder);
+            orderEventProducer.sendOrderEvent(savedOrder);
             return savedOrder;
         }
         return null;

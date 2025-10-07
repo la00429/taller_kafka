@@ -19,14 +19,14 @@ public class LoginService {
     
     public Login createLogin(Login login) {
         Login savedLogin = loginRepository.save(login);
-        loginEventProducer.publishAddLoginEvent(savedLogin);
+        loginEventProducer.sendLoginEvent(savedLogin);
         return savedLogin;
     }
     
     public Login updateLogin(Login login) {
         if (loginRepository.existsById(login.getId())) {
             Login savedLogin = loginRepository.save(login);
-            loginEventProducer.publishEditLoginEvent(savedLogin);
+            loginEventProducer.sendLoginEvent(savedLogin);
             return savedLogin;
         }
         return null;

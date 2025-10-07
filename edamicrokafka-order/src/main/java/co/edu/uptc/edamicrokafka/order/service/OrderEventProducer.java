@@ -14,7 +14,7 @@ public class OrderEventProducer {
     
     private static final String ORDER_TOPIC = "order_events";
     
-    public void publishAddOrderEvent(Order order) {
+    public void sendOrderEvent(Order order) {
         try {
             String message = JsonUtils.toJson(order);
             kafkaTemplate.send(ORDER_TOPIC, "addOrder", message);
