@@ -1,6 +1,6 @@
 package co.edu.uptc.edamicrokafka.login.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
