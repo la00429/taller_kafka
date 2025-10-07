@@ -12,26 +12,57 @@ import java.util.List;
 public class CustomerEventConsumer {
     @Autowired
     private CustomerService customerService;
-    @KafkaListener(topics = "addcustomer_events", groupId = "customer_group" )
-    public void handleAddOrderEvent(String  customer){
-        JsonUtils jsonUtil = new JsonUtils();
-        Customer receiveAddCustomer = jsonUtil.fromJson(customer, Customer.class);
+    
+    @KafkaListener(topics = "customer_events", groupId = "customer_group")
+    public void handleCustomerEvent(String message, String key) {
+        System.out.println("Received customer event with key: " + key + ", message: " + message);
+        
+        try {
+            switch (key) {
+                case "addCustomer":
+                    handleAddCustomerEvent(message);
+                    break;
+                case "editCustomer":
+                    handleEditCustomerEvent(message);
+                    break;
+                case "findCustomerById":
+                    handleFindCustomerByIdEvent(message);
+                    break;
+                case "findAllCustomers":
+                    handleFindAllCustomersEvent();
+                    break;
+                default:
+                    System.out.println("Unknown customer event type: " + key);
+            }
+        } catch (Exception e) {
+            System.err.println("Error processing customer event: " + e.getMessage());
+        }
+    }
+    
+    private void handleAddCustomerEvent(String customer) {
+        Customer receiveAddCustomer = JsonUtils.fromJson(customer, Customer.class);
         customerService.save(receiveAddCustomer);
+        System.out.println("Customer added successfully: " + receiveAddCustomer);
     }
-    @KafkaListener(topics = "editcustomer_events", groupId = "customer_group" )
-    public void handleEditOrderEvent(String  customer){
-        JsonUtils jsonUtil = new JsonUtils();
-        Customer receiveEditCustomer = jsonUtil.fromJson(customer, Customer.class);
+    
+    private void handleEditCustomerEvent(String customer) {
+        Customer receiveEditCustomer = JsonUtils.fromJson(customer, Customer.class);
         customerService.save(receiveEditCustomer);
+        System.out.println("Customer updated successfully: " + receiveEditCustomer);
     }
-    @KafkaListener(topics = "findcustomerbyid_events", groupId = "customer_group" )
-    public Customer handleFindCustomerByIdEvent(String  customer){
-        Customer customerReceived = customerService.findById(customer);
-        return customerReceived;
+    
+    private void handleFindCustomerByIdEvent(String document) {
+        Customer customerReceived = customerService.findById(document);
+        if (customerReceived != null) {
+            System.out.println("Found customer: " + customerReceived);
+        } else {
+            System.out.println("Customer not found with document: " + document);
+        }
     }
-    @KafkaListener(topics = "findallcustomers_events", groupId = "customer_group" )
-    public List<Customer> handleFindAllCustomers(){
+    
+    private void handleFindAllCustomersEvent() {
         List<Customer> customersReceived = customerService.findAll();
-        return customersReceived;
+        System.out.println("Found " + customersReceived.size() + " customers:");
+        customersReceived.forEach(System.out::println);
     }
 }

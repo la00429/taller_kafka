@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: edamicrokafka-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: customer-service
+          uri: http://localhost:8080
+          predicates:
+            - Path=/api/customers/**
+          filters:
+            - StripPrefix=2
+        - id: login-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/logins/**
+          filters:
+            - StripPrefix=2
+        - id: order-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - StripPrefix=2
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+
+server:
+  port: 8083
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
