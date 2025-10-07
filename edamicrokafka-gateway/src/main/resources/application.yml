@@ -1,31 +1,28 @@
 spring:
   application:
     name: edamicrokafka-gateway
-  cloud:
-    gateway:
-      routes:
-        - id: customer-service
-          uri: http://localhost:8080
-          predicates:
-            - Path=/api/customers/**
-        - id: login-service
-          uri: http://localhost:8081
-          predicates:
-            - Path=/api/logins/**
-        - id: order-service
-          uri: http://localhost:8082
-          predicates:
-            - Path=/api/orders/**
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins: "*"
-            allowedMethods: "*"
-            allowedHeaders: "*"
+
+zuul:
+  routes:
+    customer-service:
+      path: /api/customers/**
+      url: http://localhost:8080
+      stripPrefix: false
+    login-service:
+      path: /api/logins/**
+      url: http://localhost:8081
+      stripPrefix: false
+    order-service:
+      path: /api/orders/**
+      url: http://localhost:8082
+      stripPrefix: false
+  ignored-services: "*"
+  add-proxy-headers: true
+  sensitive-headers: Cookie,Set-Cookie
 
 server:
   port: 8083
 
 logging:
   level:
-    org.springframework.cloud.gateway: DEBUG
+    com.netflix.zuul: DEBUG
