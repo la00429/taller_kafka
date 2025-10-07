@@ -1,32 +1,45 @@
 package co.edu.uptc.edamicrokafka.controller;
 
 import co.edu.uptc.edamicrokafka.model.Customer;
-import co.edu.uptc.edamicrokafka.repository.CustomerRepository;
 import co.edu.uptc.edamicrokafka.service.CustomerEventProducer;
-import co.edu.uptc.edamicrokafka.utils.JsonUtils;
+import co.edu.uptc.edamicrokafka.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
+@RequestMapping("/api/customers")
 public class CustomerController {
-@Autowired
+    
+    @Autowired
     private CustomerEventProducer customerEventProducer;
-    private static JsonUtils jsonUtils = new JsonUtils();
+    
+    @Autowired
+    private CustomerService customerService;
 
-    @PostMapping("/addcustomer")
-    public String sendMessageAddCustomer(@RequestBody String customer){
-        Customer customerObj = jsonUtils.fromJson(customer, Customer.class);
-        customerEventProducer.sendAddCustomerEvent( customerObj);
-        return customerEventProducer.toString();
+    @PostMapping
+    public Customer createCustomer(@RequestBody Customer customer) {
+        customerEventProducer.sendAddCustomerEvent(customer);
+        return customer;
     }
 
-    @PostMapping("/editcustomer")
-    public String sendMessageEditCustomer(@RequestBody String customer){
-        Customer customerObj = jsonUtils.fromJson(customer, Customer.class);
-        customerEventProducer.sendEditCustomerEvent( customerObj);
-        return customerEventProducer.toString();
+    @PutMapping
+    public Customer updateCustomer(@RequestBody Customer customer) {
+        customerEventProducer.sendEditCustomerEvent(customer);
+        return customer;
+    }
+
+    @GetMapping("/{document}")
+    public Customer getCustomerById(@PathVariable String document) {
+        customerEventProducer.sendFindByCustomerIdEvent(document);
+        return customerService.findById(document);
+    }
+
+    @GetMapping
+    public List<Customer> getAllCustomers() {
+        customerEventProducer.sendFindAllCustomersEvent("");
+        return customerService.findAll();
     }
 }
 
