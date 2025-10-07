@@ -20,16 +20,16 @@ public class CustomerEventConsumer {
         try {
             switch (key) {
                 case "addCustomer":
-                    handleAddUserEvent(message);
+                    handleAddCustomerEvent(message);
                     break;
                 case "editCustomer":
-                    handleEditUserEvent(message);
+                    handleEditCustomerEvent(message);
                     break;
                 case "findCustomerById":
-                    handleFindUserByIdEvent(message);
+                    handleFindCustomerByIdEvent(message);
                     break;
                 case "findAllCustomers":
-                    handleFindAllUsersEvent();
+                    handleFindAllCustomersEvent();
                     break;
                 default:
                     System.out.println("Unknown customer event type: " + key);
@@ -39,19 +39,19 @@ public class CustomerEventConsumer {
         }
     }
     
-    private void handleAddUserEvent(String customer) {
+    private void handleAddCustomerEvent(String customer) {
         Customer receiveAddCustomer = JsonUtils.fromJson(customer, Customer.class);
         customerService.save(receiveAddCustomer);
         System.out.println("Customer added successfully: " + receiveAddCustomer);
     }
     
-    private void handleEditUserEvent(String customer) {
+    private void handleEditCustomerEvent(String customer) {
         Customer receiveEditCustomer = JsonUtils.fromJson(customer, Customer.class);
         customerService.save(receiveEditCustomer);
         System.out.println("Customer updated successfully: " + receiveEditCustomer);
     }
     
-    private void handleFindUserByIdEvent(String document) {
+    private void handleFindCustomerByIdEvent(String document) {
         Customer customerReceived = customerService.findById(document);
         if (customerReceived != null) {
             System.out.println("Found customer: " + customerReceived);
@@ -60,7 +60,7 @@ public class CustomerEventConsumer {
         }
     }
     
-    private void handleFindAllUsersEvent() {
+    private void handleFindAllCustomersEvent() {
         List<Customer> customersReceived = customerService.findAll();
         System.out.println("Found " + customersReceived.size() + " customers:");
         customersReceived.forEach(System.out::println);

@@ -17,7 +17,7 @@ public class CustomerEventProducer {
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
     
-    public void sendUserEvent(Customer customer) {
+    public void sendAddCustomerEvent(Customer customer) {
         String json = JsonUtils.toJson(customer);
         kafkaTemplate.send(CUSTOMER_TOPIC, "addCustomer", json);
         
@@ -25,16 +25,16 @@ public class CustomerEventProducer {
         createLoginForCustomer(customer);
     }
     
-    public void sendEditUserEvent(Customer customer) {
+    public void sendEditCustomerEvent(Customer customer) {
         String json = JsonUtils.toJson(customer);
         kafkaTemplate.send(CUSTOMER_TOPIC, "editCustomer", json);
     }
     
-    public void sendFindUserByIdEvent(String document) {
+    public void sendFindByCustomerIdEvent(String document) {
         kafkaTemplate.send(CUSTOMER_TOPIC, "findCustomerById", document);
     }
 
-    public void sendFindAllUsersEvent(String customers) {
+    public void sendFindAllCustomersEvent(String customers) {
         kafkaTemplate.send(CUSTOMER_TOPIC, "findAllCustomers", customers);
     }
     
