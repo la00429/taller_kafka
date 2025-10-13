@@ -87,8 +87,6 @@ cd order-command && mvn spring-boot:run
 POST   /api/customers          # Crear cliente
 PUT    /api/customers          # Actualizar cliente
 DELETE /api/customers/{id}     # Eliminar cliente
-GET    /api/customers/{id}     # Obtener cliente por ID
-GET    /api/customers          # Obtener todos los clientes
 ```
 
 ### Login Command (Puerto 8081)
@@ -97,8 +95,6 @@ GET    /api/customers          # Obtener todos los clientes
 POST   /api/logins             # Crear login
 PUT    /api/logins             # Actualizar login
 DELETE /api/logins/{id}        # Eliminar login
-GET    /api/logins/{id}        # Obtener login por ID
-GET    /api/logins             # Obtener todos los logins
 ```
 
 ### Order Command (Puerto 8082)
@@ -107,9 +103,9 @@ GET    /api/logins             # Obtener todos los logins
 POST   /api/orders             # Crear pedido
 PUT    /api/orders             # Actualizar pedido
 DELETE /api/orders/{id}        # Eliminar pedido
-GET    /api/orders/{id}        # Obtener pedido por ID
-GET    /api/orders             # Obtener todos los pedidos
 ```
+
+**Nota**: El Command Side NO maneja operaciones de lectura (GET). Para consultas, usar el Query Side.
 
 ## 🎯 Funcionalidades Implementadas
 

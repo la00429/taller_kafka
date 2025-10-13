@@ -167,6 +167,8 @@ PUT    /api/orders             # Actualizar pedido
 DELETE /api/orders/{id}        # Eliminar pedido
 ```
 
+**Nota**: El Command Side NO maneja operaciones de lectura (GET). Solo escritura.
+
 ### Query Side (Lectura)
 
 ```http

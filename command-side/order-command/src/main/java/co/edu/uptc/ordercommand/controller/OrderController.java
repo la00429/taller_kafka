@@ -6,9 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/orders")
 @CrossOrigin(origins = "*")
@@ -33,18 +30,5 @@ public class OrderController {
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
         orderService.delete(id);
         return ResponseEntity.ok().build();
-    }
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
-        Optional<Order> order = orderService.findById(id);
-        return order.map(ResponseEntity::ok)
-                   .orElse(ResponseEntity.notFound().build());
-    }
-    
-    @GetMapping
-    public ResponseEntity<List<Order>> getAllOrders() {
-        List<Order> orders = orderService.findAll();
-        return ResponseEntity.ok(orders);
     }
 }

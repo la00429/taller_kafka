@@ -6,9 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/logins")
 @CrossOrigin(origins = "*")
@@ -33,18 +30,5 @@ public class LoginController {
     public ResponseEntity<Void> deleteLogin(@PathVariable Long id) {
         loginService.delete(id);
         return ResponseEntity.ok().build();
-    }
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<Login> getLoginById(@PathVariable Long id) {
-        Optional<Login> login = loginService.findById(id);
-        return login.map(ResponseEntity::ok)
-                   .orElse(ResponseEntity.notFound().build());
-    }
-    
-    @GetMapping
-    public ResponseEntity<List<Login>> getAllLogins() {
-        List<Login> logins = loginService.findAll();
-        return ResponseEntity.ok(logins);
     }
 }
