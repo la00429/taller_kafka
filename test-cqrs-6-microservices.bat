@@ -9,60 +9,60 @@ docker-compose up -d
 timeout /t 10 /nobreak > nul
 
 echo [2/8] Compiling Command Side microservices...
-cd customer-command
+cd command-side\customer-command
 call mvn clean compile -q
 if %errorlevel% neq 0 (
     echo ERROR: Failed to compile customer-command
     pause
     exit /b 1
 )
-cd ..
+cd ..\..
 
-cd login-command
+cd command-side\login-command
 call mvn clean compile -q
 if %errorlevel% neq 0 (
     echo ERROR: Failed to compile login-command
     pause
     exit /b 1
 )
-cd ..
+cd ..\..
 
-cd order-command
+cd command-side\order-command
 call mvn clean compile -q
 if %errorlevel% neq 0 (
     echo ERROR: Failed to compile order-command
     pause
     exit /b 1
 )
-cd ..
+cd ..\..
 
 echo [3/8] Compiling Query Side microservices...
-cd customer-query
+cd query-side\customer-query
 call mvn clean compile -q
 if %errorlevel% neq 0 (
     echo ERROR: Failed to compile customer-query
     pause
     exit /b 1
 )
-cd ..
+cd ..\..
 
-cd login-query
+cd query-side\login-query
 call mvn clean compile -q
 if %errorlevel% neq 0 (
     echo ERROR: Failed to compile login-query
     pause
     exit /b 1
 )
-cd ..
+cd ..\..
 
-cd order-query
+cd query-side\order-query
 call mvn clean compile -q
 if %errorlevel% neq 0 (
     echo ERROR: Failed to compile order-query
     pause
     exit /b 1
 )
-cd ..
+cd ..\..
 
 echo [4/8] Compiling API Gateway...
 cd cqrs-gateway
@@ -76,23 +76,23 @@ cd ..
 
 echo [5/8] Starting Command Side microservices...
 echo Starting Customer Command (Port 8080)...
-start "Customer Command" cmd /k "cd customer-command && mvn spring-boot:run"
+start "Customer Command" cmd /k "cd command-side\customer-command && mvn spring-boot:run"
 
 echo Starting Login Command (Port 8081)...
-start "Login Command" cmd /k "cd login-command && mvn spring-boot:run"
+start "Login Command" cmd /k "cd command-side\login-command && mvn spring-boot:run"
 
 echo Starting Order Command (Port 8082)...
-start "Order Command" cmd /k "cd order-command && mvn spring-boot:run"
+start "Order Command" cmd /k "cd command-side\order-command && mvn spring-boot:run"
 
 echo [6/8] Starting Query Side microservices...
 echo Starting Customer Query (Port 8083)...
-start "Customer Query" cmd /k "cd customer-query && mvn spring-boot:run"
+start "Customer Query" cmd /k "cd query-side\customer-query && mvn spring-boot:run"
 
 echo Starting Login Query (Port 8084)...
-start "Login Query" cmd /k "cd login-query && mvn spring-boot:run"
+start "Login Query" cmd /k "cd query-side\login-query && mvn spring-boot:run"
 
 echo Starting Order Query (Port 8085)...
-start "Order Query" cmd /k "cd order-query && mvn spring-boot:run"
+start "Order Query" cmd /k "cd query-side\order-query && mvn spring-boot:run"
 
 echo [7/8] Starting API Gateway (Port 8086)...
 start "API Gateway" cmd /k "cd cqrs-gateway && mvn spring-boot:run"
