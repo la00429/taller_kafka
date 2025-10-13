@@ -18,6 +18,7 @@ public class CustomerEventProducer {
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
     
+    
     public void sendAddCustomerEvent(Customer customer) {
         String json = JsonUtils.toJson(customer);
         kafkaTemplate.send(CUSTOMER_TOPIC, "addCustomer", json);
