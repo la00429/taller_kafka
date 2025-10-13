@@ -1,7 +1,8 @@
 package co.edu.uptc.edamicrokafka.order.model;
 
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;

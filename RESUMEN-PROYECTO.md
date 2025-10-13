@@ -147,3 +147,4 @@ curl -X GET http://localhost:8083/api/logins
 ---
 
 **Desarrollado por:** Cristian Andrés Basto Largo, Andrea Katherine Bello Sotelo, Laura Vanessa Figueredo Martinez
+
