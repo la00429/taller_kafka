@@ -26,14 +26,25 @@ services:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: customerorders
-      MYSQL_USER: customerOrder
-      MYSQL_PASSWORD: corders123.
+      MYSQL_DATABASE: cqrs_commands
+      MYSQL_USER: cqrsCommand
+      MYSQL_PASSWORD: cqrs123.
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     command: --default-authentication-plugin=mysql_native_password
+
+  mongodb:
+    image: mongo:7.0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: cqrsQuery
+      MONGO_INITDB_ROOT_PASSWORD: cqrs123.
+      MONGO_INITDB_DATABASE: cqrs_queries
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
 
   kafka-init:
     image: confluentinc/cp-kafka:7.4.0
@@ -49,3 +60,4 @@ services:
 
 volumes:
   mysql_data:
+  mongodb_data:
