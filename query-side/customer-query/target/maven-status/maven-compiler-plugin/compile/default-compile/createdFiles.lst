@@ -1,0 +1,6 @@
+co\edu\uptc\customerquery\repository\CustomerRepository.class
+co\edu\uptc\customerquery\CustomerQueryApplication.class
+co\edu\uptc\customerquery\controller\CustomerController.class
+co\edu\uptc\customerquery\utils\JsonUtils.class
+co\edu\uptc\customerquery\model\Customer.class
+co\edu\uptc\customerquery\service\CustomerEventConsumer.class

@@ -1,24 +1,35 @@
-# 📮 Guía de Pruebas con Postman - CQRS Microservices
+# 📋 Instrucciones de Pruebas con Postman
 
 ## 🚀 Configuración Inicial
 
-### 1. Importar Collection
-1. Abre Postman
-2. Haz clic en "Import"
-3. Selecciona el archivo `CQRS-Postman-Tests.json`
-4. La collection "CQRS Microservices Tests" aparecerá en tu workspace
+### 1. Importar Colección
+- Importa el archivo `CQRS-Postman-Tests.json` en Postman
+- Configura el environment con la variable `base_url` = `http://localhost:8086`
 
-### 2. Verificar Configuración
-- **Base URL**: `http://localhost:8086` (API Gateway)
-- **Puerto**: 8086 (Gateway que rutea a todos los microservicios)
+### 2. Iniciar Servicios
+```bash
+# Iniciar infraestructura
+docker-compose up -d
 
-## 🧪 Pruebas Disponibles
+# Iniciar microservicios (en terminales separadas)
+cd command-side/customer-command && mvn spring-boot:run
+cd command-side/login-command && mvn spring-boot:run
+cd command-side/order-command && mvn spring-boot:run
+cd query-side/customer-query && mvn spring-boot:run
+cd query-side/login-query && mvn spring-boot:run
+cd query-side/order-query && mvn spring-boot:run
+cd cqrs-gateway && mvn spring-boot:run
+```
 
-### **1. Crear Customer (Command Side)**
-- **Método**: POST
-- **URL**: `http://localhost:8086/api/customers`
-- **Body**:
-```json
+## 🧪 Pruebas de Funcionalidad
+
+### 1. Prueba de Auto-creación de Login
+
+#### Paso 1: Crear Customer
+```http
+POST {{base_url}}/api/customers
+Content-Type: application/json
+
 {
   "document": "12345",
   "firstname": "Laura",
@@ -28,128 +39,130 @@
   "email": "laura@test.com"
 }
 ```
-- **Resultado Esperado**: 
-  - Customer creado en MySQL (Command Side)
-  - Login auto-creado con contraseña `PWD_2345`
-  - Eventos enviados a Kafka
 
-### **2. Leer Customers (Query Side)**
-- **Método**: GET
-- **URL**: `http://localhost:8086/api/customers`
-- **Resultado Esperado**: Lista de Customers desde MongoDB (Query Side)
+**Resultado esperado:**
+- Customer creado en MySQL (Command Side)
+- Login auto-creado con contraseña generada
+- Eventos enviados a Kafka
 
-### **3. Leer Customer por ID (Query Side)**
-- **Método**: GET
-- **URL**: `http://localhost:8086/api/customers/12345`
-- **Resultado Esperado**: Customer específico desde MongoDB
+#### Paso 2: Verificar Customer en Query Side
+```http
+GET {{base_url}}/api/customers/12345
+```
 
-### **4. Leer Logins (Query Side)**
-- **Método**: GET
-- **URL**: `http://localhost:8086/api/logins`
-- **Resultado Esperado**: Lista de Logins (incluye auto-creados)
+**Resultado esperado:**
+- Customer visible en MongoDB (Query Side)
+- Datos sincronizados correctamente
 
-### **5. Crear Order (Command Side)**
-- **Método**: POST
-- **URL**: `http://localhost:8086/api/orders`
-- **Body**:
-```json
+#### Paso 3: Verificar Login Auto-creado
+```http
+GET {{base_url}}/api/logins
+```
+
+**Resultado esperado:**
+- Login visible en MongoDB (Query Side)
+- Contraseña generada automáticamente
+- CustomerId coincidente con el Customer creado
+
+### 2. Prueba de Sincronización Command/Query
+
+#### Crear Login Manual
+```http
+POST {{base_url}}/api/logins
+Content-Type: application/json
+
 {
-  "customerId": "12345",
-  "productName": "Laptop",
-  "quantity": 1,
-  "price": 1500.0,
-  "orderDate": "2024-01-15T10:00:00",
-  "status": "PENDING"
+  "id": "login_67890",
+  "customerId": "67890",
+  "username": "test.user",
+  "password": "password123",
+  "email": "test@example.com"
 }
 ```
 
-### **6. Leer Orders (Query Side)**
-- **Método**: GET
-- **URL**: `http://localhost:8086/api/orders`
-
-### **7. Actualizar Customer (Command Side)**
-- **Método**: PUT
-- **URL**: `http://localhost:8086/api/customers`
-
-### **8. Eliminar Customer (Command Side)**
-- **Método**: DELETE
-- **URL**: `http://localhost:8086/api/customers/12345`
-
-## 🔍 Lo que Deberías Ver en las Terminales
-
-### **Command Side (Producers):**
-```
-[INFO] --- [customer-command] Started CustomerCommandApplication
-Published addCustomer event: {"document":"12345","firstname":"Laura"...}
-Published login creation event for customer: 12345
+#### Verificar en Query Side
+```http
+GET {{base_url}}/api/logins/login_67890
 ```
 
-### **Query Side (Consumers):**
+### 3. Prueba de Orders
+
+#### Crear Order
+```http
+POST {{base_url}}/api/orders
+Content-Type: application/json
+
+{
+  "id": "order_001",
+  "customerId": "12345",
+  "productName": "Laptop",
+  "price": 1500.00,
+  "quantity": 1,
+  "orderDate": "2025-01-13T10:30:00"
+}
 ```
-[INFO] --- [customer-query] Started CustomerQueryApplication
-Received customer event with key: addCustomer, message: {"document":"12345"...}
-Customer added to MongoDB: Customer(document=12345, firstname=Laura...)
-Received login event with key: addLogin, message: {"customerId":"12345"...}
-Login (auto-created) added to MongoDB: Login(id=12345, username=laura@test.com...)
+
+#### Verificar Order en Query Side
+```http
+GET {{base_url}}/api/orders/order_001
 ```
 
-## 📋 Secuencia de Pruebas Recomendada
+## 🔍 Verificaciones Adicionales
 
-### **Prueba 1: Crear Customer**
-1. Ejecuta "1. Crear Customer (Command Side)"
-2. Verifica en terminales que se publiquen eventos
-3. Verifica que se auto-cree el Login
+### 1. Verificar Logs de Kafka
+- Revisar consolas de microservicios para eventos de Kafka
+- Verificar que los eventos se procesan correctamente
 
-### **Prueba 2: Verificar Sincronización**
-1. Ejecuta "2. Leer Customers (Query Side)"
-2. Ejecuta "4. Leer Logins (Query Side)"
-3. Verifica que los datos estén en MongoDB
+### 2. Verificar Bases de Datos
+- **MySQL**: Verificar datos en `cqrs_commands` database
+- **MongoDB**: Verificar datos en `cqrs_queries` database
 
-### **Prueba 3: Operaciones CRUD**
-1. Ejecuta "7. Actualizar Customer (Command Side)"
-2. Ejecuta "2. Leer Customers (Query Side)" (verificar actualización)
-3. Ejecuta "8. Eliminar Customer (Command Side)"
-4. Ejecuta "2. Leer Customers (Query Side)" (verificar eliminación)
+### 3. Verificar API Gateway
+- Todas las peticiones deben pasar por puerto 8086
+- Enrutamiento automático Command/Query según método HTTP
 
-## 🎯 Validaciones Automáticas
+## 📊 Colección de Pruebas
 
-Cada prueba incluye validaciones automáticas:
-- ✅ Status code 200
-- ✅ Response time < 5000ms
-- ✅ Response no vacío
+La colección incluye:
 
-## 🚨 Solución de Problemas
+1. **Customer Tests**
+   - POST /api/customers (crear)
+   - PUT /api/customers (actualizar)
+   - DELETE /api/customers/{id} (eliminar)
+   - GET /api/customers (listar todos)
+   - GET /api/customers/{id} (obtener por ID)
 
-### **Error de Conexión:**
-- Verifica que todos los microservicios estén ejecutándose
-- Verifica que Docker Compose esté corriendo
-- Verifica que el API Gateway esté en puerto 8086
+2. **Login Tests**
+   - POST /api/logins (crear)
+   - PUT /api/logins (actualizar)
+   - DELETE /api/logins/{id} (eliminar)
+   - GET /api/logins (listar todos)
+   - GET /api/logins/{id} (obtener por ID)
 
-### **Error 404:**
-- Verifica que el API Gateway esté ruteando correctamente
-- Verifica que los microservicios estén en los puertos correctos
+3. **Order Tests**
+   - POST /api/orders (crear)
+   - PUT /api/orders (actualizar)
+   - DELETE /api/orders/{id} (eliminar)
+   - GET /api/orders (listar todos)
+   - GET /api/orders/{id} (obtener por ID)
 
-### **Error 500:**
-- Verifica las bases de datos (MySQL y MongoDB)
-- Verifica la conexión a Kafka
-- Revisa los logs de los microservicios
+## ⚠️ Notas Importantes
 
-## 📊 Datos de Prueba
+1. **Puertos**: Asegúrate de que todos los microservicios estén ejecutándose
+2. **Bases de Datos**: MySQL y MongoDB deben estar disponibles
+3. **Kafka**: Debe estar ejecutándose para la sincronización
+4. **Orden**: Ejecuta las pruebas en el orden indicado para mejor resultado
 
-### **Customers de Prueba:**
-- **Laura Perez**: Documento 12345, Email laura@test.com
-- **Cristian Basto**: Documento 67890, Email cristian@test.com  
-- **Andrea Bello**: Documento 11111, Email andrea@test.com
+## 🐛 Solución de Problemas
 
-### **Contraseñas Auto-generadas:**
-- Laura: `PWD_2345` (últimos 4 dígitos del documento)
-- Cristian: `PWD_7890`
-- Andrea: `PWD_1111`
+### Error de Conexión
+- Verificar que todos los servicios estén ejecutándose
+- Verificar configuración de puertos
 
-## 🔄 Flujo CQRS Verificado
+### Error de Sincronización
+- Verificar logs de Kafka
+- Verificar configuración de bases de datos
 
-1. **POST** → Command Side → MySQL → Kafka Event
-2. **Kafka** → Query Side → MongoDB (Sincronización)
-3. **GET** → Query Side → MongoDB (Lectura)
-
-¡Disfruta probando la arquitectura CQRS! 🚀✨
+### Error de Auto-creación
+- Verificar que Customer se creó correctamente
+- Verificar logs del CustomerEventProducer
