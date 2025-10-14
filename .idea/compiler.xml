@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="edamicrokafka-order" />
+        <module name="cqrs-gateway" />
+        <module name="order-command" />
+        <module name="login-command" />
+        <module name="order-query" />
+        <module name="edamicrokafka-gateway" />
+        <module name="customer-command" />
+        <module name="edamicrokafka-login" />
+        <module name="login-query" />
+        <module name="edamicrokafka" />
+        <module name="customer-query" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="cqrs-gateway" options="-parameters" />
+      <module name="customer-command" options="-parameters" />
+      <module name="customer-query" options="-parameters" />
+      <module name="edamicrokafka" options="-parameters" />
+      <module name="edamicrokafka-gateway" options="-parameters" />
+      <module name="edamicrokafka-login" options="-parameters" />
+      <module name="edamicrokafka-order" options="-parameters" />
+      <module name="login-command" options="-parameters" />
+      <module name="login-query" options="-parameters" />
+      <module name="order-command" options="-parameters" />
+      <module name="order-query" options="-parameters" />
+    </option>
+  </component>
+</project>

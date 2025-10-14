@@ -1,0 +1,251 @@
+{
+  "info": {
+    "name": "CQRS Microservices Tests",
+    "description": "Pruebas completas para la arquitectura CQRS con 6 microservicios",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Crear Customer (Command Side)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"document\": \"12345\",\n  \"firstname\": \"Laura\",\n  \"lastname\": \"Perez\",\n  \"address\": \"Norte\",\n  \"phone\": \"5123452\",\n  \"email\": \"laura@test.com\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8086/api/customers",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8086",
+          "path": ["api", "customers"]
+        },
+        "description": "Crea un Customer en Command Side (MySQL) y automáticamente crea un Login"
+      },
+      "response": []
+    },
+    {
+      "name": "2. Leer Customers (Query Side)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8086/api/customers",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8086",
+          "path": ["api", "customers"]
+        },
+        "description": "Lee todos los Customers desde Query Side (MongoDB)"
+      },
+      "response": []
+    },
+    {
+      "name": "3. Leer Customer por ID (Query Side)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8086/api/customers/12345",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8086",
+          "path": ["api", "customers", "12345"]
+        },
+        "description": "Lee un Customer específico desde Query Side (MongoDB)"
+      },
+      "response": []
+    },
+    {
+      "name": "4. Leer Logins (Query Side)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8086/api/logins",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8086",
+          "path": ["api", "logins"]
+        },
+        "description": "Lee todos los Logins desde Query Side (MongoDB) - incluye auto-creados"
+      },
+      "response": []
+    },
+    {
+      "name": "5. Crear Order (Command Side)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customerId\": \"12345\",\n  \"productName\": \"Laptop\",\n  \"quantity\": 1,\n  \"price\": 1500.0,\n  \"orderDate\": \"2024-01-15T10:00:00\",\n  \"status\": \"PENDING\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8086/api/orders",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8086",
+          "path": ["api", "orders"]
+        },
+        "description": "Crea un Order en Command Side (MySQL)"
+      },
+      "response": []
+    },
+    {
+      "name": "6. Leer Orders (Query Side)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8086/api/orders",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8086",
+          "path": ["api", "orders"]
+        },
+        "description": "Lee todos los Orders desde Query Side (MongoDB)"
+      },
+      "response": []
+    },
+    {
+      "name": "7. Actualizar Customer (Command Side)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"document\": \"12345\",\n  \"firstname\": \"Laura\",\n  \"lastname\": \"Perez\",\n  \"address\": \"Sur\",\n  \"phone\": \"5123452\",\n  \"email\": \"laura.updated@test.com\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8086/api/customers",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8086",
+          "path": ["api", "customers"]
+        },
+        "description": "Actualiza un Customer en Command Side (MySQL)"
+      },
+      "response": []
+    },
+    {
+      "name": "8. Eliminar Customer (Command Side)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8086/api/customers/12345",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8086",
+          "path": ["api", "customers", "12345"]
+        },
+        "description": "Elimina un Customer en Command Side (MySQL)"
+      },
+      "response": []
+    },
+    {
+      "name": "9. Crear Customer 2 (Command Side)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"document\": \"67890\",\n  \"firstname\": \"Cristian\",\n  \"lastname\": \"Basto\",\n  \"address\": \"Centro\",\n  \"phone\": \"9876543\",\n  \"email\": \"cristian@test.com\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8086/api/customers",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8086",
+          "path": ["api", "customers"]
+        },
+        "description": "Crea un segundo Customer para probar múltiples registros"
+      },
+      "response": []
+    },
+    {
+      "name": "10. Crear Customer 3 (Command Side)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"document\": \"11111\",\n  \"firstname\": \"Andrea\",\n  \"lastname\": \"Bello\",\n  \"address\": \"Oriente\",\n  \"phone\": \"5555555\",\n  \"email\": \"andrea@test.com\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8086/api/customers",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8086",
+          "path": ["api", "customers"]
+        },
+        "description": "Crea un tercer Customer para probar múltiples registros"
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "console.log('Ejecutando prueba: ' + pm.info.requestName);"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test('Status code is 200', function () {",
+          "    pm.response.to.have.status(200);",
+          "});",
+          "",
+          "pm.test('Response time is less than 5000ms', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+          "});",
+          "",
+          "pm.test('Response has content', function () {",
+          "    pm.expect(pm.response.text()).to.not.be.empty;",
+          "});"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8086",
+      "type": "string"
+    }
+  ]
+}

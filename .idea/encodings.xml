@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/command-side/customer-command/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/command-side/login-command/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/command-side/order-command/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cqrs-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/edamicrokafka-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/edamicrokafka-login/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/edamicrokafka-order/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/edamicrokafka/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/query-side/customer-query/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/query-side/login-query/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/query-side/order-query/src/main/java" charset="UTF-8" />
+  </component>
+</project>

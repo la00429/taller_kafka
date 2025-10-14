@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/query-side/login-query/pom.xml" />
+        <option value="$PROJECT_DIR$/query-side/order-query/pom.xml" />
+        <option value="$PROJECT_DIR$/query-side/customer-query/pom.xml" />
+        <option value="$PROJECT_DIR$/command-side/login-command/pom.xml" />
+        <option value="$PROJECT_DIR$/command-side/order-command/pom.xml" />
+        <option value="$PROJECT_DIR$/command-side/customer-command/pom.xml" />
+        <option value="$PROJECT_DIR$/cqrs-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/edamicrokafka/pom.xml" />
+        <option value="$PROJECT_DIR$/edamicrokafka-login/pom.xml" />
+        <option value="$PROJECT_DIR$/edamicrokafka-order/pom.xml" />
+        <option value="$PROJECT_DIR$/edamicrokafka-gateway/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_23" default="true" project-jdk-name="openjdk-23" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

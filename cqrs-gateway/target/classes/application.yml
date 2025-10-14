@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: cqrs-gateway
+  cloud:
+    gateway:
+      routes:
+        # Command Side (Write Operations)
+        - id: customer-command
+          uri: http://localhost:8080
+          predicates:
+            - Path=/api/customers/**
+            - Method=POST,PUT,DELETE
+        - id: login-command
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/logins/**
+            - Method=POST,PUT,DELETE
+        - id: order-command
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/orders/**
+            - Method=POST,PUT,DELETE
+        
+        # Query Side (Read Operations)
+        - id: customer-query
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/customers/**
+            - Method=GET
+        - id: login-query
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/logins/**
+            - Method=GET
+        - id: order-query
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/orders/**
+            - Method=GET
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+
+server:
+  port: 8086
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
