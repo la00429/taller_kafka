@@ -21,6 +21,49 @@ public class LoginEventConsumer {
         System.out.println("Received login event with key: " + key + ", message: " + message);
         
         try {
+            // Check if key and message are JSON (with or without quotes)
+            boolean keyIsJson = key != null && (key.startsWith("{") || key.startsWith("\"{"));
+            boolean messageIsJson = message != null && (message.startsWith("{") || message.startsWith("\"{"));
+            
+            System.out.println("Key is JSON: " + keyIsJson);
+            System.out.println("Message is JSON: " + messageIsJson);
+            
+            // If both key and message are JSON, assume it's an addLogin event
+            if (keyIsJson && messageIsJson) {
+                System.out.println("Both key and message are JSON, treating as addLogin event");
+                // Use message if it's clean JSON, otherwise use key
+                String jsonData = message.startsWith("{") ? message : key;
+                handleAddLoginEvent(jsonData);
+                return;
+            }
+            
+            // If key looks like JSON, it means they are swapped
+            if (key != null && key.startsWith("{")) {
+                System.out.println("Key is JSON, treating as addLogin event");
+                handleAddLoginEvent(key);
+                return;
+            }
+            
+            // If message looks like JSON and key is a string, use the key as event type
+            if (message != null && message.startsWith("{") && key != null && !key.startsWith("{")) {
+                System.out.println("Message is JSON, key is event type: " + key);
+                switch (key) {
+                    case "addLogin":
+                        handleAddLoginEvent(message);
+                        break;
+                    case "editLogin":
+                        handleEditLoginEvent(message);
+                        break;
+                    case "deleteLogin":
+                        handleDeleteLoginEvent(message);
+                        break;
+                    default:
+                        System.out.println("Unknown login event type: " + key);
+                }
+                return;
+            }
+            
+            // Default case - try to process as normal
             switch (key) {
                 case "addLogin":
                     handleAddLoginEvent(message);
@@ -43,8 +86,6 @@ public class LoginEventConsumer {
         // Handle both Login object and Map from auto-creation
         try {
             Login login = JsonUtils.fromJson(loginJson, Login.class);
-            // Convert Long id to String for MongoDB
-            login.setId(login.getId().toString());
             loginRepository.save(login);
             System.out.println("Login added to MongoDB: " + login);
         } catch (Exception e) {
@@ -69,8 +110,6 @@ public class LoginEventConsumer {
     
     private void handleEditLoginEvent(String loginJson) {
         Login login = JsonUtils.fromJson(loginJson, Login.class);
-        // Convert Long id to String for MongoDB
-        login.setId(login.getId().toString());
         loginRepository.save(login);
         System.out.println("Login updated in MongoDB: " + login);
     }

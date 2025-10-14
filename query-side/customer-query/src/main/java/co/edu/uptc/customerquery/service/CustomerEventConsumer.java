@@ -18,6 +18,49 @@ public class CustomerEventConsumer {
         System.out.println("Received customer event with key: " + key + ", message: " + message);
         
         try {
+            // Check if key and message are JSON (with or without quotes)
+            boolean keyIsJson = key != null && (key.startsWith("{") || key.startsWith("\"{"));
+            boolean messageIsJson = message != null && (message.startsWith("{") || message.startsWith("\"{"));
+            
+            System.out.println("Key is JSON: " + keyIsJson);
+            System.out.println("Message is JSON: " + messageIsJson);
+            
+            // If both key and message are JSON, assume it's an addCustomer event
+            if (keyIsJson && messageIsJson) {
+                System.out.println("Both key and message are JSON, treating as addCustomer event");
+                // Use message if it's clean JSON, otherwise use key
+                String jsonData = message.startsWith("{") ? message : key;
+                handleAddCustomerEvent(jsonData);
+                return;
+            }
+            
+            // If key looks like JSON, it means they are swapped
+            if (key != null && key.startsWith("{")) {
+                System.out.println("Key is JSON, treating as addCustomer event");
+                handleAddCustomerEvent(key);
+                return;
+            }
+            
+            // If message looks like JSON and key is a string, use the key as event type
+            if (message != null && message.startsWith("{") && key != null && !key.startsWith("{")) {
+                System.out.println("Message is JSON, key is event type: " + key);
+                switch (key) {
+                    case "addCustomer":
+                        handleAddCustomerEvent(message);
+                        break;
+                    case "editCustomer":
+                        handleEditCustomerEvent(message);
+                        break;
+                    case "deleteCustomer":
+                        handleDeleteCustomerEvent(message);
+                        break;
+                    default:
+                        System.out.println("Unknown customer event type: " + key);
+                }
+                return;
+            }
+            
+            // Default case - try to process as normal
             switch (key) {
                 case "addCustomer":
                     handleAddCustomerEvent(message);

@@ -37,10 +37,6 @@ services:
 
   mongodb:
     image: mongo:7.0
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: cqrsQuery
-      MONGO_INITDB_ROOT_PASSWORD: cqrs123.
-      MONGO_INITDB_DATABASE: cqrs_queries
     ports:
       - "27017:27017"
     volumes:

@@ -21,8 +21,18 @@ public class JsonUtils {
     
     public static <T> T fromJson(String json, Class<T> clazz) {
         try {
-            return objectMapper.readValue(json, clazz);
+            // Remove surrounding quotes if present
+            String cleanJson = json;
+            if (json.startsWith("\"") && json.endsWith("\"")) {
+                cleanJson = json.substring(1, json.length() - 1);
+                // Unescape quotes
+                cleanJson = cleanJson.replace("\\\"", "\"");
+            }
+            System.out.println("Cleaned JSON: " + cleanJson);
+            return objectMapper.readValue(cleanJson, clazz);
         } catch (Exception e) {
+            System.err.println("Error converting JSON to object: " + e.getMessage());
+            System.err.println("Original JSON: " + json);
             throw new RuntimeException("Error converting JSON to object", e);
         }
     }
